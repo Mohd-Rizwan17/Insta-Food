@@ -1,0 +1,21 @@
+const mongoose = require("mongoose");
+
+const likedFoodSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
+    food: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "food",
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+const likedFoodModel = mongoose.model("likedFood", likedFoodSchema);
+
+module.exports = likedFoodModel;
