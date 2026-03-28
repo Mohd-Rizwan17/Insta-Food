@@ -101,7 +101,7 @@ const Home = () => {
           style={{ textAlign: "center", margin: "24px 0" }}
         >
           <p style={{ marginBottom: "10px" }}>
-            Welcome! To view the reel, first go to the login page.
+            Welcome! To view the reel,Please first go to the login page.
           </p>
           <div
             style={{ display: "flex", justifyContent: "center", gap: "12px" }}
