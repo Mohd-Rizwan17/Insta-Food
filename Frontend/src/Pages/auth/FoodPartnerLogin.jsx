@@ -1,4 +1,3 @@
-import React from "react";
 import "../../styles/auth-shared.css";
 import api from "../../lib/api";
 import { useNavigate } from "react-router-dom";
@@ -12,13 +11,10 @@ const FoodPartnerLogin = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const response = await api.post(
-      "/api/auth/food-partner/login",
-      {
-        email,
-        password,
-      },
-    );
+    const response = await api.post("/api/auth/food-partner/login", {
+      email,
+      password,
+    });
 
     console.log(response.data);
 

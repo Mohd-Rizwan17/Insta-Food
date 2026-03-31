@@ -1,15 +1,15 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import UserRegister from "../pages/auth/UserRegister";
-import ChooseRegister from "../pages/auth/ChooseRegister";
-import UserLogin from "../pages/auth/UserLogin";
-import FoodPartnerRegister from "../pages/auth/FoodPartnerRegister";
-import FoodPartnerLogin from "../pages/auth/FoodPartnerLogin";
 import Saved from "../pages/general/Saved";
 import BottomNav from "../components/BottomNav";
-import CreateFood from "../pages/food-partner/CreateFood";
-import Profile from "../pages/food-partner/Profile";
-import Home from "../Pages/general/Home";
+import Home from "../pages/general/Home";
+import ChooseRegister from "../Pages/auth/ChooseRegister";
+import UserRegister from "../Pages/auth/UserRegister";
+import UserLogin from "../Pages/auth/UserLogin";
+import FoodPartnerRegister from "../Pages/auth/FoodPartnerRegister";
+import FoodPartnerLogin from "../Pages/auth/FoodPartnerLogin";
+import CreateFood from "../Pages/food-partner/CreateFood";
+import Profile from "../Pages/food-partner/Profile";
 
 const router = createBrowserRouter([
   { path: "/register", element: <ChooseRegister /> },
