@@ -1,8 +1,8 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Saved from "../pages/general/Saved";
+import Saved from "../Pages/general/Saved";
 import BottomNav from "../components/BottomNav";
-import Home from "../pages/general/Home";
+import Home from "../Pages/general/Home";
 import ChooseRegister from "../Pages/auth/ChooseRegister";
 import UserRegister from "../Pages/auth/UserRegister";
 import UserLogin from "../Pages/auth/UserLogin";
