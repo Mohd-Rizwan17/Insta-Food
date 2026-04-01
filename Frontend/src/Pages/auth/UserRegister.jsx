@@ -20,7 +20,8 @@ const UserRegister = () => {
 
     try {
       const response = await api.post(
-        "/api/auth/user/register",
+        // "/api/auth/user/register",
+        "/api/auth/register",
         {
           fullName: firstName + " " + lastName,
           email,
