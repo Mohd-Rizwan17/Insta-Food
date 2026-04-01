@@ -19,16 +19,21 @@ const UserRegister = () => {
     const password = e.target.password.value;
 
     try {
-      const response = await api.post(
-        // "/api/auth/user/register",
-        "/api/auth/register",
-        {
-          fullName: firstName + " " + lastName,
-          email,
-          password,
-          phone,
-        },
-      );
+      // const response = await api.post(
+      //   "/api/auth/user/register",
+      //   {
+      //     fullName: firstName + " " + lastName,
+      //     email,
+      //     password,
+      //     phone,
+      //   },
+      // );
+      const response = await api.post("/api/auth/register", {
+        fullName: firstName + " " + lastName,
+        email,
+        password,
+        phone,
+      });
 
       console.log(response.data);
 
