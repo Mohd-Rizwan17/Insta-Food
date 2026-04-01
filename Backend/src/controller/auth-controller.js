@@ -195,7 +195,12 @@ async function loginFoodPartner(req, res) {
       { expiresIn: "7d" },
     );
 
-    res.cookie("token", token, { httpOnly: true });
+    // res.cookie("token", token, { httpOnly: true });
+    res.cookie("foodPartnerToken", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
 
     res.status(200).json({
       message: "Food partner logged in successfully",
