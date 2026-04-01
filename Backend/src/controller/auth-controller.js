@@ -82,7 +82,12 @@ async function loginUser(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
-    res.cookie("token", token, { httpOnly: true });
+    // res.cookie("token", token, { httpOnly: true });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true, // 🔥 MUST for HTTPS (Render)
+      sameSite: "None", // 🔥 MUST for cross-origin
+    });
 
     res.status(200).json({
       message: "User logged in successfully",
