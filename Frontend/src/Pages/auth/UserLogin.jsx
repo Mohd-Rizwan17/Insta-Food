@@ -15,12 +15,7 @@ const UserLogin = () => {
     const password = e.target.password.value;
 
     try {
-      // const response = await api.post("/api/auth/user/login",
-      //    {
-      //   email,
-      //   password,
-      // });
-      const response = await api.post("/api/auth/login", {
+      const response = await api.post("/api/auth/user/login", {
         email,
         password,
       });
