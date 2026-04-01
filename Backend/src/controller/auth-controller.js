@@ -82,6 +82,7 @@ async function loginUser(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
+    console.log("token:", token);
     // res.cookie("token", token, { httpOnly: true });
     res.cookie("token", token, {
       httpOnly: true,
@@ -194,6 +195,8 @@ async function loginFoodPartner(req, res) {
       process.env.JWT_SECRET,
       { expiresIn: "7d" },
     );
+
+    console.log("token:", token);
 
     // res.cookie("token", token, { httpOnly: true });
     res.cookie("foodPartnerToken", token, {
