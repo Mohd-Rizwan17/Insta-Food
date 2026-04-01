@@ -105,7 +105,8 @@ async function loginUser(req, res) {
 }
 
 function logoutUser(req, res) {
-  res.clearCookie("token");
+  // res.clearCookie("token");
+  res.clearCookie("userToken"); // 🔥 FIX
   res.status(200).json({ message: "User logged out successfully" });
 }
 
@@ -313,7 +314,8 @@ async function getFoodPartnerById(req, res) {
 }
 
 function logoutFoodPartner(req, res) {
-  res.clearCookie("token");
+  // res.clearCookie("token");
+  res.clearCookie("foodPartnerToken"); // 🔥 FIX
   res.status(200).json({ message: "Food partner logged out successfully" });
 }
 
