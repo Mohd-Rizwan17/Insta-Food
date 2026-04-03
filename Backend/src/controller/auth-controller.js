@@ -86,8 +86,8 @@ async function loginUser(req, res) {
     // res.cookie("token", token, { httpOnly: true });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // 🔥 MUST for HTTPS (Render)
-      sameSite: "None", // 🔥 MUST for cross-origin
+      secure: true,
+      sameSite: "None",
     });
 
     res.status(200).json({
@@ -200,7 +200,7 @@ async function loginFoodPartner(req, res) {
     console.log("token:", token);
 
     // res.cookie("token", token, { httpOnly: true });
-    res.cookie("foodPartnerToken", token, {
+    res.cookie("token", token, {
       httpOnly: true,
       secure: true,
       sameSite: "None",

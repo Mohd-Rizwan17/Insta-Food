@@ -16,7 +16,7 @@ app.use(express.json());
 // );
 app.use(
   cors({
-    origin: "https://insta-food-kft1.onrender.com", // 👈 frontend URL
+    origin: "https://insta-food-kft1.onrender.com",
     credentials: true,
   }),
 );
