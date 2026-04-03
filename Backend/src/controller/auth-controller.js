@@ -89,6 +89,7 @@ async function loginUser(req, res) {
       secure: true,
       sameSite: "None",
       path: "/", // 🔥 ADD THIS
+      domain: ".onrender.com",
     });
 
     res.status(200).json({
@@ -206,6 +207,7 @@ async function loginFoodPartner(req, res) {
       secure: true,
       sameSite: "None",
       path: "/", // 🔥 ADD THIS
+      domain: ".onrender.com",
     });
 
     res.status(200).json({
