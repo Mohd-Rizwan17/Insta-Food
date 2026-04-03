@@ -88,6 +88,7 @@ async function loginUser(req, res) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      path: "/", // 🔥 ADD THIS
     });
 
     res.status(200).json({
@@ -204,6 +205,7 @@ async function loginFoodPartner(req, res) {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      path: "/", // 🔥 ADD THIS
     });
 
     res.status(200).json({

@@ -27,6 +27,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/food", foodRoutes);
+app.set("trust proxy", 1);
 
 // Global error handler (catch-all errors)
 app.use((err, req, res, next) => {
