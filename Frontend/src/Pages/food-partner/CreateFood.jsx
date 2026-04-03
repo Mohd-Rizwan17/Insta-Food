@@ -74,13 +74,17 @@ const CreateFood = () => {
     formData.append("video", videoFile);
 
     try {
-      const response = await api.post("/api/food", formData);
+      // const response = await api.post("/api/food", formData);
+      const response = await api.post("/api/food", formData, {
+        withCredentials: true, // 🔥 ADD THIS
+      });
 
       console.log(response.data);
       navigate("/"); // Redirect to home or another page after successful creation
     } catch (error) {
       setSubmitError(
-        error.response?.data?.message || "Unable to create food item right now.",
+        error.response?.data?.message ||
+          "Unable to create food item right now.",
       );
     }
   };
