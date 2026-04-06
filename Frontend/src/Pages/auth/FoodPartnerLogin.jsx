@@ -11,10 +11,16 @@ const FoodPartnerLogin = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const response = await api.post("/api/auth/food-partner/login", {
-      email,
-      password,
-    });
+    const response = await api.post(
+      "/api/auth/food-partner/login",
+      {
+        email,
+        password,
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
     console.log(response.data);
 

@@ -89,7 +89,6 @@ async function loginUser(req, res) {
       secure: true,
       sameSite: "None",
       path: "/", // 🔥 ADD THIS
-      domain: ".onrender.com",
     });
 
     res.status(200).json({
@@ -108,7 +107,7 @@ async function loginUser(req, res) {
 
 function logoutUser(req, res) {
   // res.clearCookie("token");
-  res.clearCookie("userToken"); // 🔥 FIX
+  res.clearCookie("token"); // 🔥 FIX
   res.status(200).json({ message: "User logged out successfully" });
 }
 
@@ -204,10 +203,9 @@ async function loginFoodPartner(req, res) {
     // res.cookie("token", token, { httpOnly: true });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // REQUIRED for HTTPS
-      sameSite: "None", // REQUIRED for cross-origin
+      secure: true,
+      sameSite: "None",
       path: "/", // 🔥 ADD THIS
-      domain: ".onrender.com",
     });
 
     res.status(200).json({
@@ -319,7 +317,7 @@ async function getFoodPartnerById(req, res) {
 
 function logoutFoodPartner(req, res) {
   // res.clearCookie("token");
-  res.clearCookie("foodPartnerToken"); // 🔥 FIX
+  res.clearCookie("token"); // 🔥 FIX
   res.status(200).json({ message: "Food partner logged out successfully" });
 }
 
