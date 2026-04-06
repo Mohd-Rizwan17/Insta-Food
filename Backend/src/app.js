@@ -18,7 +18,10 @@ app.use(express.json());
 // );
 app.use(
   cors({
-    origin: "https://insta-food-kft1.onrender.com",
+    origin: [
+      "https://insta-food-kft1.onrender.com",
+      "https://insta-food-jwby.vercel.app",
+    ],
     credentials: true,
   }),
 );
