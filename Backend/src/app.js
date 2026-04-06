@@ -3,7 +3,6 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth-routes");
 const foodRoutes = require("./routes/food-routes");
 const cors = require("cors");
-
 const app = express();
 
 app.set("trust proxy", 1);
@@ -16,11 +15,12 @@ app.use(express.json());
 //     credentials: true,
 //   }),
 // );
+
 app.use(
   cors({
     origin: [
-      "https://insta-food-kft1.onrender.com",
       "https://insta-food-jwby.vercel.app",
+      "https://insta-food-kft1.onrender.com",
     ],
     credentials: true,
   }),

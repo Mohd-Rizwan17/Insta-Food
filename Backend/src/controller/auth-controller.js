@@ -204,8 +204,8 @@ async function loginFoodPartner(req, res) {
     // res.cookie("token", token, { httpOnly: true });
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: true, // REQUIRED for HTTPS
+      sameSite: "None", // REQUIRED for cross-origin
       path: "/", // 🔥 ADD THIS
       domain: ".onrender.com",
     });
