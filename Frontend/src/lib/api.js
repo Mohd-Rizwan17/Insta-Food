@@ -13,11 +13,9 @@
 
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-
 const api = axios.create({
-  baseURL,
-  withCredentials: true,
+  baseURL: "https://insta-food-1.onrender.com", // 🔥 tera backend URL
+  withCredentials: true, // 🔥 cookie ke liye MUST
 });
 
 export default api;
