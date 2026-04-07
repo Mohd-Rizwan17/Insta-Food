@@ -25,6 +25,7 @@ const UserLogin = () => {
           withCredentials: true,
         },
       );
+      localStorage.setItem("token", response.data.token);
 
       console.log(response.data);
       navigate("/"); // Redirect to home after login

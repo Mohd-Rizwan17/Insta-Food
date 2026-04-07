@@ -22,6 +22,8 @@ const FoodPartnerLogin = () => {
       },
     );
 
+    localStorage.setItem("token", response.data.token);
+
     console.log(response.data);
 
     navigate("/create-food"); // Redirect to create food page after login
