@@ -22,7 +22,7 @@ const FoodPartnerLogin = () => {
       },
     );
 
-    localStorage.setItem("token", response.data.token);
+    // localStorage.setItem("token", response.data.token);
 
     console.log(response.data);
 

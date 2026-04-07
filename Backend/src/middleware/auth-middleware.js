@@ -3,8 +3,8 @@ const userModel = require("../models/user-models");
 const jwt = require("jsonwebtoken");
 
 async function authFoodPartnerMiddleware(req, res, next) {
-  // const token = req.cookies.token;
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.token;
+  // const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return res.status(401).json({ message: "please login first" });
   }
@@ -24,8 +24,7 @@ async function authFoodPartnerMiddleware(req, res, next) {
 }
 
 async function authUserMiddleware(req, res, next) {
-  // const token = req.cookies.token;
-  const token = req.headers.authorization?.split(" ")[1];
+  const token = req.cookies.token;
   if (!token) {
     return res.status(401).json({ message: "please login first" });
   }

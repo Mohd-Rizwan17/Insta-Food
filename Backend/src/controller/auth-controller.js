@@ -98,7 +98,6 @@ async function loginUser(req, res) {
         email: user.email,
         fullName: user.fullName,
       },
-      token,
     });
   } catch (error) {
     console.error("loginUser error:", error);
@@ -216,7 +215,6 @@ async function loginFoodPartner(req, res) {
         email: foodPartner.email,
         name: foodPartner.name,
       },
-      token,
     });
   } catch (error) {
     console.error("loginFoodPartner error:", error);
