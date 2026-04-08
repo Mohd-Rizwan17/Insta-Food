@@ -1,6 +1,21 @@
-import React, { useState } from "react";
-import api from "../lib/api";
+import React, { useState, useEffect } from "react";
 import { useToast } from "./Toast";
+
+const getStoredFollowing = () => {
+  try {
+    return JSON.parse(localStorage.getItem("following")) || [];
+  } catch {
+    return [];
+  }
+};
+
+const setStoredFollowing = (list) => {
+  try {
+    localStorage.setItem("following", JSON.stringify(list));
+  } catch {
+    // ignore storage errors
+  }
+};
 
 const FollowButton = ({
   foodPartnerId,
@@ -9,21 +24,32 @@ const FollowButton = ({
 }) => {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isLoading, setIsLoading] = useState(false);
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
-  const handleFollowToggle = async () => {
+  useEffect(() => {
+    const storedFollowing = getStoredFollowing();
+    setIsFollowing(storedFollowing.includes(foodPartnerId));
+  }, [foodPartnerId]);
+
+  const handleFollowToggle = () => {
     setIsLoading(true);
     try {
-      const response = await api.post(`/api/follow/${foodPartnerId}`);
+      const storedFollowing = getStoredFollowing();
+      const nextFollowing = storedFollowing.includes(foodPartnerId)
+        ? storedFollowing.filter((id) => id !== foodPartnerId)
+        : [...storedFollowing, foodPartnerId];
 
-      const newFollowState = response.data.isFollowing;
-      setIsFollowing(newFollowState);
+      setStoredFollowing(nextFollowing);
+      const nextState = nextFollowing.includes(foodPartnerId);
+      setIsFollowing(nextState);
 
       if (onFollowChange) {
-        onFollowChange(newFollowState);
+        onFollowChange(nextState);
       }
+
+      showSuccess(nextState ? "Following" : "Unfollowed successfully");
     } catch (error) {
-      console.log(error.response?.data);
+      console.log(error);
       showError("Follow failed");
     } finally {
       setIsLoading(false);

@@ -4,6 +4,18 @@ import ProfileTabs from "../../components/ProfileTabs";
 import { useToast } from "../../components/Toast";
 import "../../styles/user-profile.css";
 
+const getStoredUserProfile = () => {
+  try {
+    return JSON.parse(localStorage.getItem("userProfile")) || null;
+  } catch {
+    return null;
+  }
+};
+
+const saveStoredUserProfile = (profile) => {
+  localStorage.setItem("userProfile", JSON.stringify(profile));
+};
+
 const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -16,17 +28,30 @@ const UserProfile = () => {
   }, []);
 
   const loadUserProfile = async () => {
+    const localProfile = getStoredUserProfile();
+    if (localProfile) {
+      setUser(localProfile);
+      setEditForm({
+        fullName: localProfile.fullName || "",
+        email: localProfile.email || "",
+      });
+    }
+
     try {
-      const response = await api.get("/api/auth/session");
-      if (response.data.user) {
-        setUser(response.data.user);
-        setEditForm({
-          fullName: response.data.user.fullName || "",
-          email: response.data.user.email || "",
-        });
+      const response = await fetch("/api/auth/session");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.user) {
+          const merged = { ...data.user, ...(localProfile || {}) };
+          setUser(merged);
+          setEditForm({
+            fullName: merged.fullName || "",
+            email: merged.email || "",
+          });
+        }
       }
     } catch (error) {
-      console.error("Error loading user profile:", error);
+      console.log("Offline profile load or session not available.");
     } finally {
       setIsLoading(false);
     }
@@ -41,24 +66,21 @@ const UserProfile = () => {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditSubmit = async (e) => {
+  const handleEditSubmit = (e) => {
     e.preventDefault();
     try {
-      const response = await api.put("/api/user/profile", {
+      const updatedProfile = {
+        ...user,
         fullName: editForm.fullName,
         email: editForm.email,
-      });
+      };
 
-      setUser((prev) => ({
-        ...prev,
-        fullName: editForm.fullName,
-        email: editForm.email,
-      }));
-
+      setUser(updatedProfile);
+      saveStoredUserProfile(updatedProfile);
       setIsEditing(false);
       showSuccess("Profile updated successfully");
     } catch (error) {
-      console.log(error.response?.data);
+      console.log(error);
       showError("Profile update failed");
     }
   };

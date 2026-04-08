@@ -5,6 +5,22 @@ import api from "../../lib/api";
 import { useToast } from "../../components/Toast";
 import FollowButton from "../../components/FollowButton";
 
+const getStoredOrders = () => {
+  try {
+    return JSON.parse(localStorage.getItem("orders")) || [];
+  } catch {
+    return [];
+  }
+};
+
+const setStoredOrders = (orders) => {
+  try {
+    localStorage.setItem("orders", JSON.stringify(orders));
+  } catch {
+    // ignore storage errors
+  }
+};
+
 const Profile = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
@@ -16,6 +32,11 @@ const Profile = () => {
 
   useEffect(() => {
     loadProfile();
+    const storedOrders = getStoredOrders();
+    const orderedIds = new Set(
+      storedOrders.map((order) => order.foodId || order.id),
+    );
+    setOrderedItems(orderedIds);
   }, [id]);
 
   const loadProfile = async () => {
@@ -33,24 +54,25 @@ const Profile = () => {
     }
   };
 
-  const handleOrder = async (foodItem) => {
+  const handleOrder = (foodItem) => {
     try {
-      // Assuming there's an order endpoint - adjust if different
-      const response = await api.post("/api/order", {
-        foodId: foodItem._id,
-        foodPartnerId: id,
-      });
+      const currentOrders = getStoredOrders();
+      const foodId = foodItem._id || foodItem.id;
+      const newOrder = {
+        id: `${foodId}-${Date.now()}`,
+        foodId,
+        foodName: foodItem.description || "Food item",
+        price: foodItem.price || 0,
+        partnerId: id,
+        date: new Date().toISOString(),
+      };
+      const nextOrders = [...currentOrders, newOrder];
+      setStoredOrders(nextOrders);
 
-      // Mark as ordered
-      setOrderedItems((prev) => new Set([...prev, foodItem._id]));
-
-      // Show success feedback
-      showSuccess("Order placed successfully! ✅");
-
-      // Optionally save to local state for profile orders tab
-      // This would need to be implemented based on your backend structure
+      setOrderedItems((prev) => new Set(prev).add(foodId));
+      showSuccess("Order Placed Successfully ✅");
     } catch (error) {
-      console.log(error.response?.data);
+      console.log(error);
       showError("Failed to place order");
     }
   };

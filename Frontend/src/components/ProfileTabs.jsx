@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from "react";
-import api from "../lib/api";
 import { useToast } from "./Toast";
+
+const getLocalStorageData = (key, defaultValue = []) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || defaultValue;
+  } catch {
+    return defaultValue;
+  }
+};
+
+const setLocalStorageData = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch {
+    // ignore write failures
+  }
+};
 
 const ProfileTabs = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("orders");
@@ -9,44 +24,52 @@ const ProfileTabs = ({ userId }) => {
   const [likes, setLikes] = useState([]);
   const [following, setFollowing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { showError } = useToast();
+  const { showError, showSuccess } = useToast();
 
   useEffect(() => {
     loadTabData(activeTab);
   }, [activeTab]);
 
-  const loadTabData = async (tab) => {
+  const loadTabData = (tab) => {
     setIsLoading(true);
     try {
       switch (tab) {
-        case "orders":
-          // You'll need to create this endpoint in backend
-          const ordersRes = await api.get("/api/user/orders");
-          setOrders(ordersRes.data.orders || []);
+        case "orders": {
+          const storedOrders = getLocalStorageData("orders", []);
+          setOrders(storedOrders);
           break;
+        }
 
-        case "saved":
-          const savedRes = await api.get("/api/food/save");
-          setSaved(savedRes.data.savedFoods || []);
+        case "saved": {
+          const storedSaved = getLocalStorageData("savedFoods", []);
+          setSaved(storedSaved);
           break;
+        }
 
-        case "likes":
-          // You'll need to create this endpoint in backend
-          const likesRes = await api.get("/api/user/likes");
-          setLikes(likesRes.data.likes || []);
+        case "likes": {
+          const storedLikes = getLocalStorageData("likes", []);
+          setLikes(storedLikes);
           break;
+        }
 
-        case "following":
-          // You'll need to create this endpoint in backend
-          const followingRes = await api.get("/api/user/following");
-          setFollowing(followingRes.data.following || []);
+        case "following": {
+          const storedFollowing = getLocalStorageData("following", []);
+          setFollowing(
+            storedFollowing.map((id) => ({
+              _id: id,
+              name: `Partner ${id.slice(-6)}`,
+              address: "Saved partner",
+            })),
+          );
           break;
+        }
 
         default:
           break;
       }
     } catch (error) {
       console.error(`Error loading ${tab}:`, error);
+      showError("Could not load profile section");
     } finally {
       setIsLoading(false);
     }
@@ -94,10 +117,12 @@ const ProfileTabs = ({ userId }) => {
               <p className="empty-tab">No orders yet</p>
             ) : (
               orders.map((order) => (
-                <div key={order._id} className="order-card">
-                  <img src={order.food?.video} alt={order.food?.description} />
-                  <p className="card-title">{order.food?.description}</p>
-                  <p className="card-meta">Order ID: {order._id.slice(0, 8)}</p>
+                <div key={order.id} className="order-card">
+                  <div className="order-card-placeholder" />
+                  <p className="card-title">{order.foodName}</p>
+                  <p className="card-meta">Order ID: {order.id.slice(0, 8)}</p>
+                  <p className="card-meta">₹{order.price}</p>
+                  <p className="card-meta">Partner: {order.partnerId}</p>
                 </div>
               ))
             )}
@@ -150,13 +175,26 @@ const ProfileTabs = ({ userId }) => {
                   </div>
                   <button
                     className="unfollow-btn"
-                    onClick={async () => {
+                    onClick={() => {
                       try {
-                        await api.post(`/api/follow/${partner._id}`);
-                        // Reload following list after unfollow
-                        loadTabData("following");
+                        const storedFollowing = getLocalStorageData(
+                          "following",
+                          [],
+                        );
+                        const nextFollowing = storedFollowing.filter(
+                          (storedId) => storedId !== partner._id,
+                        );
+                        setLocalStorageData("following", nextFollowing);
+                        setFollowing(
+                          nextFollowing.map((id) => ({
+                            _id: id,
+                            name: `Partner ${id.slice(-6)}`,
+                            address: "Saved partner",
+                          })),
+                        );
+                        showSuccess("Unfollowed successfully");
                       } catch (error) {
-                        console.log("Error unfollowing:", error.response?.data);
+                        console.log("Error unfollowing:", error);
                         showError("Failed to unfollow");
                       }
                     }}
