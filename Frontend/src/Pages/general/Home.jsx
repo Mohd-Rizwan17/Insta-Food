@@ -54,7 +54,9 @@ const Home = () => {
       } else {
         setVideos((prev) =>
           prev.map((v) =>
-            v._id === item._id ? { ...v, likeCount: Math.max(0, v.likeCount - 1) } : v,
+            v._id === item._id
+              ? { ...v, likeCount: Math.max(0, v.likeCount - 1) }
+              : v,
           ),
         );
       }
@@ -80,7 +82,9 @@ const Home = () => {
       } else {
         setVideos((prev) =>
           prev.map((v) =>
-            v._id === item._id ? { ...v, savesCount: Math.max(0, v.savesCount - 1) } : v,
+            v._id === item._id
+              ? { ...v, savesCount: Math.max(0, v.savesCount - 1) }
+              : v,
           ),
         );
       }
@@ -115,10 +119,16 @@ const Home = () => {
             <h2>Welcome to Insta Food! 🍕</h2>
             <p>Discover delicious food from amazing restaurants</p>
             <div className="auth-buttons">
-              <button onClick={() => navigate("/user/login")} className="auth-btn primary">
+              <button
+                onClick={() => navigate("/user/login")}
+                className="auth-btn primary"
+              >
                 User Login
               </button>
-              <button onClick={() => navigate("/food-partner/login")} className="auth-btn secondary">
+              <button
+                onClick={() => navigate("/food-partner/login")}
+                className="auth-btn secondary"
+              >
                 Partner Login
               </button>
             </div>
@@ -136,11 +146,6 @@ const Home = () => {
       onVisitStore={handleVisitStore}
       emptyMessage="No videos available. Check back soon!"
     />
-  );
-};
-
-export default Home;
-    </>
   );
 };
 
