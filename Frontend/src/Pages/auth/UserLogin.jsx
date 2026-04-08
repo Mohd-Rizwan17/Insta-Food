@@ -2,9 +2,11 @@ import React from "react";
 import "../../styles/auth-shared.css";
 import api from "../../lib/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const UserLogin = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useAuth();
   const [submitError, setSubmitError] = React.useState("");
 
   const handleSubmit = async (e) => {
@@ -27,7 +29,7 @@ const UserLogin = () => {
       );
       // localStorage.setItem("token", response.data.token);
 
-      console.log(response.data);
+      await fetchUser();
       navigate("/"); // Redirect to home after login
     } catch (error) {
       console.error("User login error", error);

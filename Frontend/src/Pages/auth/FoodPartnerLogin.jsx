@@ -1,9 +1,11 @@
 import "../../styles/auth-shared.css";
 import api from "../../lib/api";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const FoodPartnerLogin = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ const FoodPartnerLogin = () => {
 
     // localStorage.setItem("token", response.data.token);
 
+    await fetchUser();
     console.log(response.data);
 
     navigate("/create-food"); // Redirect to create food page after login

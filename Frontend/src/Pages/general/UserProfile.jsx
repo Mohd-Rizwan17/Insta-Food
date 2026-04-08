@@ -1,61 +1,29 @@
 import React, { useEffect, useState } from "react";
-import api from "../../lib/api";
 import ProfileTabs from "../../components/ProfileTabs";
 import { useToast } from "../../components/Toast";
+import { useAuth } from "../../context/AuthContext";
 import "../../styles/user-profile.css";
 
-const getStoredUserProfile = () => {
-  try {
-    return JSON.parse(localStorage.getItem("userProfile")) || null;
-  } catch {
-    return null;
-  }
-};
-
-const saveStoredUserProfile = (profile) => {
-  localStorage.setItem("userProfile", JSON.stringify(profile));
-};
-
 const UserProfile = () => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { user, setUser, fetchUser, isLoading: authLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ fullName: "", email: "" });
   const { showSuccess, showError } = useToast();
 
   useEffect(() => {
-    loadUserProfile();
-  }, []);
-
-  const loadUserProfile = async () => {
-    const localProfile = getStoredUserProfile();
-    if (localProfile) {
-      setUser(localProfile);
+    if (user) {
       setEditForm({
-        fullName: localProfile.fullName || "",
-        email: localProfile.email || "",
+        fullName: user.fullName || "",
+        email: user.email || "",
       });
     }
+  }, [user]);
 
-    try {
-      const response = await fetch("/api/auth/session");
-      if (response.ok) {
-        const data = await response.json();
-        if (data.user) {
-          const merged = { ...data.user, ...(localProfile || {}) };
-          setUser(merged);
-          setEditForm({
-            fullName: merged.fullName || "",
-            email: merged.email || "",
-          });
-        }
-      }
-    } catch (error) {
-      console.log("Offline profile load or session not available.");
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (!user && !authLoading) {
+      fetchUser();
     }
-  };
+  }, [user, authLoading, fetchUser]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -66,17 +34,33 @@ const UserProfile = () => {
     setEditForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEditSubmit = (e) => {
+  const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedProfile = {
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName: editForm.fullName,
+          email: editForm.email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Profile update failed");
+      }
+
+      const data = await response.json();
+      const updatedProfile = data.user || {
         ...user,
         fullName: editForm.fullName,
         email: editForm.email,
       };
 
       setUser(updatedProfile);
-      saveStoredUserProfile(updatedProfile);
       setIsEditing(false);
       showSuccess("Profile updated successfully");
     } catch (error) {
@@ -87,18 +71,19 @@ const UserProfile = () => {
 
   const handleLogout = async () => {
     try {
-      await api.get("/api/auth/logout");
-      localStorage.removeItem("token");
-      window.location.href = "/user/login";
+      await fetch("/api/auth/logout", {
+        method: "GET",
+        credentials: "include",
+      });
     } catch (error) {
       console.error("Error logging out:", error);
-      // Still clear localStorage and redirect even if API fails
-      localStorage.removeItem("token");
+    } finally {
+      setUser(null);
       window.location.href = "/user/login";
     }
   };
 
-  if (isLoading) {
+  if (authLoading) {
     return (
       <div className="user-profile-page">
         <div className="loading-skeleton">Loading profile...</div>
