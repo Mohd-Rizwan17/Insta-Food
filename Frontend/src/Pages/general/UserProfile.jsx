@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import "../../styles/user-profile.css";
 
 const UserProfile = () => {
-  const { user, setUser, fetchUser, isLoading: authLoading } = useAuth();
+  const { user, setUser, isLoading: authLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ fullName: "", email: "" });
   const { showSuccess, showError } = useToast();
@@ -18,12 +18,6 @@ const UserProfile = () => {
       });
     }
   }, [user]);
-
-  useEffect(() => {
-    if (!user && !authLoading) {
-      fetchUser();
-    }
-  }, [user, authLoading, fetchUser]);
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);

@@ -83,7 +83,7 @@ const ReelFeed = ({
                 <div className="reel-action-group">
                   <button
                     onClick={onLike ? () => onLike(item) : undefined}
-                    className={`reel-action ${item.userLiked ? "liked" : ""}`}
+                    className="reel-action"
                     aria-label="Like"
                     title="Like"
                   >
@@ -91,7 +91,7 @@ const ReelFeed = ({
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
-                      fill={item.userLiked ? "currentColor" : "none"}
+                      fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
@@ -101,17 +101,13 @@ const ReelFeed = ({
                     </svg>
                   </button>
                   <div className="reel-action__count">
-                    {item.totalLikes ??
-                      item.likeCount ??
-                      item.likesCount ??
-                      item.likes ??
-                      0}
+                    {item.likeCount ?? item.likesCount ?? item.likes ?? 0}
                   </div>
                 </div>
 
                 <div className="reel-action-group">
                   <button
-                    className={`reel-action ${item.userSaved ? "saved" : ""}`}
+                    className="reel-action"
                     onClick={onSave ? () => onSave(item) : undefined}
                     aria-label="Bookmark"
                     title="Save"
@@ -120,7 +116,7 @@ const ReelFeed = ({
                       width="22"
                       height="22"
                       viewBox="0 0 24 24"
-                      fill={item.userSaved ? "currentColor" : "none"}
+                      fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
@@ -130,11 +126,7 @@ const ReelFeed = ({
                     </svg>
                   </button>
                   <div className="reel-action__count">
-                    {item.totalSaves ??
-                      item.savesCount ??
-                      item.bookmarks ??
-                      item.saves ??
-                      0}
+                    {item.savesCount ?? item.bookmarks ?? item.saves ?? 0}
                   </div>
                 </div>
 

@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const UserLogin = () => {
   const navigate = useNavigate();
-  const { fetchUser } = useAuth();
+  const { setUser } = useAuth();
   const [submitError, setSubmitError] = React.useState("");
 
   const handleSubmit = async (e) => {
