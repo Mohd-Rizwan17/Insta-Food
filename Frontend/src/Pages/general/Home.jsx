@@ -3,11 +3,13 @@ import api from "../../lib/api";
 import { useNavigate } from "react-router-dom";
 import "../../styles/reels.css";
 import ReelFeed from "../../components/ReelFeed";
+import { useToast } from "../../components/Toast";
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const { showError } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,10 +64,7 @@ const Home = () => {
       }
     } catch (error) {
       console.error("likeVideo error", error.response?.data || error.message);
-      alert(
-        error.response?.data?.message ||
-          "Could not like/unlike this item. Please login as user.",
-      );
+      showError("Could not like/unlike this item. Please login as user.");
     }
   }
 
@@ -90,10 +89,7 @@ const Home = () => {
       }
     } catch (error) {
       console.error("saveVideo error", error.response?.data || error.message);
-      alert(
-        error.response?.data?.message ||
-          "Could not save/unsave this item. Please login as user.",
-      );
+      showError("Could not save/unsave this item. Please login as user.");
     }
   }
 

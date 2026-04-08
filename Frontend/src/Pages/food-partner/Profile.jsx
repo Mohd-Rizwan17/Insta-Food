@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../../styles/food-partner-profile.css";
 import { useParams } from "react-router-dom";
 import api from "../../lib/api";
+import { useToast } from "../../components/Toast";
 import FollowButton from "../../components/FollowButton";
 
 const Profile = () => {
@@ -10,6 +11,8 @@ const Profile = () => {
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("menu");
+  const [orderedItems, setOrderedItems] = useState(new Set());
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     loadProfile();
@@ -27,6 +30,28 @@ const Profile = () => {
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleOrder = async (foodItem) => {
+    try {
+      // Assuming there's an order endpoint - adjust if different
+      const response = await api.post("/api/order", {
+        foodId: foodItem._id,
+        foodPartnerId: id,
+      });
+
+      // Mark as ordered
+      setOrderedItems((prev) => new Set([...prev, foodItem._id]));
+
+      // Show success feedback
+      showSuccess("Order placed successfully! ✅");
+
+      // Optionally save to local state for profile orders tab
+      // This would need to be implemented based on your backend structure
+    } catch (error) {
+      console.log(error.response?.data);
+      showError("Failed to place order");
     }
   };
 
@@ -136,7 +161,15 @@ const Profile = () => {
                           preload="metadata"
                         />
                         <div className="food-card-overlay">
-                          <button className="order-btn">Order</button>
+                          <button
+                            className={`order-btn ${orderedItems.has(item._id || item.id) ? "ordered" : ""}`}
+                            onClick={() => handleOrder(item)}
+                            disabled={orderedItems.has(item._id || item.id)}
+                          >
+                            {orderedItems.has(item._id || item.id)
+                              ? "Order Placed ✅"
+                              : "Order"}
+                          </button>
                         </div>
                       </div>
                       <div className="food-card-content">

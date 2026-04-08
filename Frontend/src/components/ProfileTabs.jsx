@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../lib/api";
+import { useToast } from "./Toast";
 
 const ProfileTabs = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("orders");
@@ -8,6 +9,7 @@ const ProfileTabs = ({ userId }) => {
   const [likes, setLikes] = useState([]);
   const [following, setFollowing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { showError } = useToast();
 
   useEffect(() => {
     loadTabData(activeTab);
@@ -154,13 +156,8 @@ const ProfileTabs = ({ userId }) => {
                         // Reload following list after unfollow
                         loadTabData("following");
                       } catch (error) {
-                        console.error(
-                          "Error unfollowing:",
-                          error.response?.data,
-                        );
-                        alert(
-                          error.response?.data?.message || "Failed to unfollow",
-                        );
+                        console.log("Error unfollowing:", error.response?.data);
+                        showError("Failed to unfollow");
                       }
                     }}
                   >

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../../lib/api";
 import ProfileTabs from "../../components/ProfileTabs";
+import { useToast } from "../../components/Toast";
 import "../../styles/user-profile.css";
 
 const UserProfile = () => {
@@ -8,6 +9,7 @@ const UserProfile = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ fullName: "", email: "" });
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     loadUserProfile();
@@ -42,17 +44,22 @@ const UserProfile = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.put("/api/user/profile", editForm);
+      const response = await api.put("/api/user/profile", {
+        fullName: editForm.fullName,
+        email: editForm.email,
+      });
+
       setUser((prev) => ({
         ...prev,
         fullName: editForm.fullName,
         email: editForm.email,
       }));
+
       setIsEditing(false);
-      alert("Profile updated successfully");
+      showSuccess("Profile updated successfully");
     } catch (error) {
-      console.error("Error updating profile:", error.response?.data);
-      alert(error.response?.data?.message || "Failed to update profile");
+      console.log(error.response?.data);
+      showError("Profile update failed");
     }
   };
 

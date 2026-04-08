@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../lib/api";
+import { useToast } from "./Toast";
 
 const FollowButton = ({
   foodPartnerId,
@@ -8,6 +9,7 @@ const FollowButton = ({
 }) => {
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isLoading, setIsLoading] = useState(false);
+  const { showError } = useToast();
 
   const handleFollowToggle = async () => {
     setIsLoading(true);
@@ -21,8 +23,8 @@ const FollowButton = ({
         onFollowChange(newFollowState);
       }
     } catch (error) {
-      console.error("Error toggling follow:", error.response?.data);
-      alert(error.response?.data?.message || "Failed to toggle follow");
+      console.log(error.response?.data);
+      showError("Follow failed");
     } finally {
       setIsLoading(false);
     }
