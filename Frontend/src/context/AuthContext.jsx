@@ -5,7 +5,6 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import api from "../lib/api";
 
 const AuthContext = createContext(null);
 
@@ -17,44 +16,50 @@ export const useAuth = () => {
   return context;
 };
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+const getStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user")) || null;
+  } catch {
+    return null;
+  }
+};
 
-  const fetchUser = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await api.get("/api/user/me");
-      if (response?.data?.user) {
-        setUser(response.data.user);
-      } else if (response?.data) {
-        setUser(response.data);
-      }
-    } catch (error) {
-      console.log(
-        "Auth fetch user error",
-        error.response?.data || error.message,
-      );
-      try {
-        const response = await api.get("/api/auth/session");
-        if (response?.data?.user) {
-          setUser(response.data.user);
-        }
-      } catch (fallbackError) {
-        console.log(
-          "Auth fallback session error",
-          fallbackError.response?.data || fallbackError.message,
-        );
-        setUser(null);
-      }
-    } finally {
-      setIsLoading(false);
+const setStoredUser = (user) => {
+  try {
+    localStorage.setItem("user", JSON.stringify(user));
+  } catch {
+    // ignore
+  }
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUserState] = useState(() => getStoredUser());
+  const [isLoading, setIsLoading] = useState(false);
+
+  const setUser = useCallback((userData) => {
+    setUserState(userData);
+    if (userData) {
+      setStoredUser(userData);
+    } else {
+      localStorage.removeItem("user");
     }
   }, []);
 
+  const fetchUser = useCallback(() => {
+    // User is loaded from localStorage on init
+    const storedUser = getStoredUser();
+    setUserState(storedUser);
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    // Load from localStorage on mount
+    const storedUser = getStoredUser();
+    if (storedUser) {
+      setUserState(storedUser);
+    }
+    setIsLoading(false);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser, fetchUser, isLoading }}>

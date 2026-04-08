@@ -29,7 +29,8 @@ const UserLogin = () => {
       );
       // localStorage.setItem("token", response.data.token);
 
-      await fetchUser();
+      const userData = response.data.user || response.data;
+      setUser(userData);
       navigate("/"); // Redirect to home after login
     } catch (error) {
       console.error("User login error", error);

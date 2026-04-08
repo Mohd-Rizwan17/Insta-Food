@@ -4,27 +4,34 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/reels.css";
 import ReelFeed from "../../components/ReelFeed";
 import { useToast } from "../../components/Toast";
+import { useAuth } from "../../context/AuthContext";
+import {
+  toggleLike,
+  toggleSave,
+  getTotalLikeCount,
+  getTotalSaveCount,
+  hasUserLiked,
+  hasUserSaved,
+} from "../../lib/likesSaves";
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const { showError } = useToast();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    api
-      .get("/api/auth/session")
-      .then((response) => {
-        setIsAuthenticated(Boolean(response.data?.authenticated));
-      })
-      .catch(() => {
-        setIsAuthenticated(false);
-      })
-      .finally(() => {
-        setIsCheckingAuth(false);
-      });
-  }, []);
+    // Check if user is authenticated
+    if (user) {
+      setIsAuthenticated(true);
+      setIsCheckingAuth(false);
+    } else {
+      setIsAuthenticated(false);
+      setIsCheckingAuth(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -36,62 +43,76 @@ const Home = () => {
     try {
       const response = await api.get("/api/food");
       if (response.data.foodItems) {
-        setVideos(response.data.foodItems);
+        // Add like/save state for current user
+        const videosWithState = response.data.foodItems.map((video) => ({
+          ...video,
+          userLiked: hasUserLiked(user?._id, video._id),
+          userSaved: hasUserSaved(user?._id, video._id),
+          totalLikes: getTotalLikeCount(video._id),
+          totalSaves: getTotalSaveCount(video._id),
+        }));
+        setVideos(videosWithState);
       }
     } catch (error) {
       console.error("Error loading videos:", error);
     }
   };
 
-  async function likeVideo(item) {
-    try {
-      const response = await api.post("/api/food/like", { foodId: item._id });
-
-      if (response.data.like) {
-        setVideos((prev) =>
-          prev.map((v) =>
-            v._id === item._id ? { ...v, likeCount: v.likeCount + 1 } : v,
-          ),
-        );
-      } else {
-        setVideos((prev) =>
-          prev.map((v) =>
-            v._id === item._id
-              ? { ...v, likeCount: Math.max(0, v.likeCount - 1) }
-              : v,
-          ),
-        );
-      }
-    } catch (error) {
-      console.error("likeVideo error", error.response?.data || error.message);
-      showError("Could not like/unlike this item. Please login as user.");
+  const likeVideo = (item) => {
+    if (!user?._id) {
+      showError("Please login to like videos");
+      return;
     }
-  }
 
-  async function saveVideo(item) {
     try {
-      const response = await api.post("/api/food/save", { foodId: item._id });
+      const wasLiked = toggleLike(user._id, item._id);
+      const newTotalLikes = getTotalLikeCount(item._id);
 
-      if (response.data.save) {
-        setVideos((prev) =>
-          prev.map((v) =>
-            v._id === item._id ? { ...v, savesCount: v.savesCount + 1 } : v,
-          ),
-        );
-      } else {
-        setVideos((prev) =>
-          prev.map((v) =>
-            v._id === item._id
-              ? { ...v, savesCount: Math.max(0, v.savesCount - 1) }
-              : v,
-          ),
-        );
-      }
+      setVideos((prev) =>
+        prev.map((v) =>
+          v._id === item._id
+            ? {
+                ...v,
+                userLiked: wasLiked,
+                totalLikes: newTotalLikes,
+                likeCount: newTotalLikes,
+              }
+            : v,
+        ),
+      );
     } catch (error) {
-      console.error("saveVideo error", error.response?.data || error.message);
-      showError("Could not save/unsave this item. Please login as user.");
+      console.error("likeVideo error", error);
+      showError("Could not like/unlike this item.");
     }
-  }
+  };
+
+  const saveVideo = (item) => {
+    if (!user?._id) {
+      showError("Please login to save videos");
+      return;
+    }
+
+    try {
+      const wasSaved = toggleSave(user._id, item._id);
+      const newTotalSaves = getTotalSaveCount(item._id);
+
+      setVideos((prev) =>
+        prev.map((v) =>
+          v._id === item._id
+            ? {
+                ...v,
+                userSaved: wasSaved,
+                totalSaves: newTotalSaves,
+                savesCount: newTotalSaves,
+              }
+            : v,
+        ),
+      );
+    } catch (error) {
+      console.error("saveVideo error", error);
+      showError("Could not save/unsave this item.");
+    }
+  };
 
   const handleVisitStore = (foodPartnerId) => {
     navigate(`/food-partner/${foodPartnerId}`);

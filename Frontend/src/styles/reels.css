@@ -198,6 +198,22 @@
   outline-offset: 2px;
 }
 
+.reel-action.liked {
+  color: #ff3366;
+}
+
+.reel-action.liked:hover {
+  background: rgba(255, 51, 102, 0.2);
+}
+
+.reel-action.saved {
+  color: #ffd700;
+}
+
+.reel-action.saved:hover {
+  background: rgba(255, 215, 0, 0.2);
+}
+
 .reel-action__count {
   color: #fff;
   text-align: center;

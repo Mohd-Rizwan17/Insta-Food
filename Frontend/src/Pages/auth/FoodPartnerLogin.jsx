@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 
 const FoodPartnerLogin = () => {
   const navigate = useNavigate();
-  const { fetchUser } = useAuth();
+  const { setUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +26,8 @@ const FoodPartnerLogin = () => {
 
     // localStorage.setItem("token", response.data.token);
 
-    await fetchUser();
+    const userData = response.data.user || response.data;
+    setUser(userData);
     console.log(response.data);
 
     navigate("/create-food"); // Redirect to create food page after login
