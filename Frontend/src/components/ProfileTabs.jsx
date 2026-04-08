@@ -148,9 +148,20 @@ const ProfileTabs = ({ userId }) => {
                   </div>
                   <button
                     className="unfollow-btn"
-                    onClick={() => {
-                      // Handle unfollow
-                      console.log("Unfollow:", partner._id);
+                    onClick={async () => {
+                      try {
+                        await api.post(`/api/follow/${partner._id}`);
+                        // Reload following list after unfollow
+                        loadTabData("following");
+                      } catch (error) {
+                        console.error(
+                          "Error unfollowing:",
+                          error.response?.data,
+                        );
+                        alert(
+                          error.response?.data?.message || "Failed to unfollow",
+                        );
+                      }
                     }}
                   >
                     Following

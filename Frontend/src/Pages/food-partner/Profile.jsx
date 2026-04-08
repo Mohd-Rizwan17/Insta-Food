@@ -9,6 +9,7 @@ const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("menu");
 
   useEffect(() => {
     loadProfile();
@@ -50,7 +51,13 @@ const Profile = () => {
   return (
     <main className="partner-profile-page">
       <section className="partner-profile-header">
-        <div className="partner-header-background" />
+        <div className="partner-header-background">
+          <img
+            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=400&fit=crop"
+            alt="Restaurant banner"
+            className="partner-banner-image"
+          />
+        </div>
 
         <div className="partner-header-content">
           <div className="partner-avatar-section">
@@ -65,6 +72,8 @@ const Profile = () => {
             {profile.contact && (
               <p className="partner-contact">📞 {profile.contact}</p>
             )}
+
+            <div className="partner-rating">⭐ 4.5 (120 reviews)</div>
 
             <div className="partner-stats">
               <div className="stat-item">
@@ -86,52 +95,99 @@ const Profile = () => {
         </div>
       </section>
 
-      <section className="partner-menu-section">
-        <h2 className="section-title">Menu</h2>
+      <section className="partner-tabs-section">
+        <div className="partner-tabs">
+          <button
+            className={`partner-tab ${activeTab === "menu" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("menu")}
+          >
+            Menu
+          </button>
+          <button
+            className={`partner-tab ${activeTab === "reviews" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("reviews")}
+          >
+            Reviews
+          </button>
+          <button
+            className={`partner-tab ${activeTab === "info" ? "is-active" : ""}`}
+            onClick={() => setActiveTab("info")}
+          >
+            Info
+          </button>
+        </div>
 
-        {videos.length === 0 ? (
-          <div className="empty-menu">
-            <p>No menu items available</p>
-          </div>
-        ) : (
-          <div className="menu-grid">
-            {videos.map((item) => (
-              <div key={item._id || item.id} className="menu-card">
-                <div className="menu-card-image">
-                  <video
-                    className="menu-video"
-                    src={item.video}
-                    muted
-                    preload="metadata"
-                  />
-                  <div className="menu-card-overlay">
-                    <button className="order-btn">Order</button>
-                  </div>
+        <div className="partner-tab-content">
+          {activeTab === "menu" && (
+            <div className="menu-section">
+              {videos.length === 0 ? (
+                <div className="empty-menu">
+                  <p>No menu items available</p>
                 </div>
-                <div className="menu-card-content">
-                  <h3 className="menu-item-name">{item.description}</h3>
-                  {item.price && (
-                    <p className="menu-item-price">₹{item.price}</p>
-                  )}
-                  <div className="menu-item-meta">
-                    <span className="likes">
-                      ❤️ {item.likeCount || 0} Likes
-                    </span>
-                    <span className="saves">
-                      🔖 {item.savesCount || 0} Saves
-                    </span>
-                  </div>
+              ) : (
+                <div className="menu-grid">
+                  {videos.map((item) => (
+                    <div key={item._id || item.id} className="food-card">
+                      <div className="food-card-image">
+                        <video
+                          className="food-video"
+                          src={item.video}
+                          muted
+                          preload="metadata"
+                        />
+                        <div className="food-card-overlay">
+                          <button className="order-btn">Order</button>
+                        </div>
+                      </div>
+                      <div className="food-card-content">
+                        <h3 className="food-item-name">{item.description}</h3>
+                        <p className="food-item-price">
+                          ₹{item.price || "150"}
+                        </p>
+                        <div className="food-item-meta">
+                          <span className="likes">
+                            ❤️ {item.likeCount || 0} Likes
+                          </span>
+                          <span className="saves">
+                            🔖 {item.savesCount || 0} Saves
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "reviews" && (
+            <div className="reviews-section">
+              <div className="reviews-placeholder">
+                <p>⭐ Reviews coming soon</p>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            </div>
+          )}
 
-      <section className="ratings-reviews-section">
-        <h2 className="section-title">Ratings & Reviews</h2>
-        <div className="ratings-placeholder">
-          <p>⭐ Coming soon</p>
+          {activeTab === "info" && (
+            <div className="info-section">
+              <div className="info-card">
+                <h3>Contact Information</h3>
+                <p>
+                  <strong>Address:</strong> {profile.address}
+                </p>
+                {profile.contact && (
+                  <p>
+                    <strong>Phone:</strong> {profile.contact}
+                  </p>
+                )}
+                {profile.ownerName && (
+                  <p>
+                    <strong>Owner:</strong> {profile.ownerName}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </section>
     </main>

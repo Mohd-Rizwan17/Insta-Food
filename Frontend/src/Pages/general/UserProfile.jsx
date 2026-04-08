@@ -42,8 +42,7 @@ const UserProfile = () => {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      // You'll need to create this endpoint in backend
-      await api.put("/api/user/profile", editForm);
+      const response = await api.put("/api/user/profile", editForm);
       setUser((prev) => ({
         ...prev,
         fullName: editForm.fullName,
@@ -52,7 +51,7 @@ const UserProfile = () => {
       setIsEditing(false);
       alert("Profile updated successfully");
     } catch (error) {
-      console.error("Error updating profile:", error);
+      console.error("Error updating profile:", error.response?.data);
       alert(error.response?.data?.message || "Failed to update profile");
     }
   };
@@ -60,9 +59,13 @@ const UserProfile = () => {
   const handleLogout = async () => {
     try {
       await api.get("/api/auth/logout");
+      localStorage.removeItem("token");
       window.location.href = "/user/login";
     } catch (error) {
       console.error("Error logging out:", error);
+      // Still clear localStorage and redirect even if API fails
+      localStorage.removeItem("token");
+      window.location.href = "/user/login";
     }
   };
 

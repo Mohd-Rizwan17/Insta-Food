@@ -15,9 +15,19 @@
 }
 
 .partner-header-background {
-  height: 120px;
+  height: 200px;
   background: linear-gradient(135deg, var(--color-accent), #8b5cf6);
-  opacity: 0.8;
+  position: relative;
+  overflow: hidden;
+}
+
+.partner-banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .partner-header-content {
@@ -67,6 +77,13 @@
 .partner-contact {
   color: var(--color-text-secondary);
   font-size: 0.95rem;
+  margin: 0 0 var(--space-2);
+}
+
+.partner-rating {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-accent);
   margin: 0 0 var(--space-4);
 }
 
@@ -108,6 +125,57 @@
   margin-top: var(--space-6);
 }
 
+/* Tabs Section */
+.partner-tabs-section {
+  padding: var(--space-8) var(--space-6);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.partner-tabs {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--space-6);
+}
+
+.partner-tab {
+  padding: var(--space-4) var(--space-3);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.partner-tab:hover {
+  color: var(--color-text);
+}
+
+.partner-tab.is-active {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+.partner-tab-content {
+  animation: fadeIn 200ms ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Menu Section */
 .partner-menu-section {
   padding: var(--space-8) var(--space-6);
@@ -124,12 +192,12 @@
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: var(--space-6);
   margin-bottom: var(--space-8);
 }
 
-.menu-card {
+.food-card {
   background: var(--color-surface);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -140,26 +208,26 @@
   cursor: pointer;
 }
 
-.menu-card:hover {
+.food-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.menu-card-image {
+.food-card-image {
   position: relative;
   height: 200px;
   background: #000;
   overflow: hidden;
 }
 
-.menu-video {
+.food-video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
 }
 
-.menu-card-overlay {
+.food-card-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0);
@@ -172,7 +240,7 @@
     opacity var(--transition-base);
 }
 
-.menu-card:hover .menu-card-overlay {
+.food-card:hover .food-card-overlay {
   background: rgba(0, 0, 0, 0.5);
   opacity: 1;
 }
@@ -195,12 +263,12 @@
   transform: scale(1.05);
 }
 
-.menu-card-content {
+.food-card-content {
   padding: var(--space-4);
 }
 
-.menu-item-name {
-  font-size: 1rem;
+.food-item-name {
+  font-size: 1.1rem;
   font-weight: 600;
   margin: 0 0 var(--space-2) 0;
   color: var(--color-text);
@@ -211,14 +279,14 @@
   line-clamp: 2;
 }
 
-.menu-item-price {
+.food-item-price {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-accent);
   margin: 0 0 var(--space-3) 0;
 }
 
-.menu-item-meta {
+.food-item-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -226,7 +294,7 @@
   color: var(--color-text-secondary);
 }
 
-.menu-item-meta span {
+.food-item-meta span {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -237,6 +305,48 @@
   padding: 60px var(--space-4);
   color: var(--color-text-secondary);
   font-size: 1.1rem;
+}
+
+/* Reviews Section */
+.reviews-section {
+  padding: var(--space-8) 0;
+}
+
+.reviews-placeholder {
+  text-align: center;
+  padding: 60px var(--space-4);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 1.1rem;
+}
+
+/* Info Section */
+.info-section {
+  padding: var(--space-8) 0;
+}
+
+.info-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.info-card h3 {
+  margin: 0 0 var(--space-4) 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.info-card p {
+  margin: 0 0 var(--space-3) 0;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
 }
 
 /* Ratings & Reviews Section */
@@ -286,11 +396,11 @@
   }
 
   .menu-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: var(--space-4);
   }
 
-  .menu-card-image {
+  .food-card-image {
     height: 160px;
   }
 }

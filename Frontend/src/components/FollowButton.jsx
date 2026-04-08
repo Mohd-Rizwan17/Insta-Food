@@ -12,11 +12,7 @@ const FollowButton = ({
   const handleFollowToggle = async () => {
     setIsLoading(true);
     try {
-      // For now, we'll create a simple endpoint call
-      // You'll need to add this to your backend
-      const response = await api.post("/api/user/follow", {
-        foodPartnerId,
-      });
+      const response = await api.post(`/api/follow/${foodPartnerId}`);
 
       const newFollowState = response.data.isFollowing;
       setIsFollowing(newFollowState);
@@ -25,7 +21,7 @@ const FollowButton = ({
         onFollowChange(newFollowState);
       }
     } catch (error) {
-      console.error("Error toggling follow:", error);
+      console.error("Error toggling follow:", error.response?.data);
       alert(error.response?.data?.message || "Failed to toggle follow");
     } finally {
       setIsLoading(false);
