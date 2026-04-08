@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../lib/api";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "../../styles/reels.css";
 import ReelFeed from "../../components/ReelFeed";
 
@@ -8,7 +8,7 @@ const Home = () => {
   const [videos, setVideos] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  // Autoplay behavior is handled inside ReelFeed
+  const navigate = useNavigate();
 
   useEffect(() => {
     api
@@ -25,36 +25,36 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    api
-      .get("/api/food")
-      .then((response) => {
-        console.log(response.data);
+    if (isAuthenticated) {
+      loadVideos();
+    }
+  }, [isAuthenticated]);
 
+  const loadVideos = async () => {
+    try {
+      const response = await api.get("/api/food");
+      if (response.data.foodItems) {
         setVideos(response.data.foodItems);
-      })
-      .catch(() => {
-        /* noop: optionally handle error */
-      });
-  }, []);
-
-  // Using local refs within ReelFeed; keeping map here for dependency parity if needed
+      }
+    } catch (error) {
+      console.error("Error loading videos:", error);
+    }
+  };
 
   async function likeVideo(item) {
     try {
       const response = await api.post("/api/food/like", { foodId: item._id });
 
       if (response.data.like) {
-        console.log("Video liked");
         setVideos((prev) =>
           prev.map((v) =>
             v._id === item._id ? { ...v, likeCount: v.likeCount + 1 } : v,
           ),
         );
       } else {
-        console.log("Video unliked");
         setVideos((prev) =>
           prev.map((v) =>
-            v._id === item._id ? { ...v, likeCount: v.likeCount - 1 } : v,
+            v._id === item._id ? { ...v, likeCount: Math.max(0, v.likeCount - 1) } : v,
           ),
         );
       }
@@ -80,7 +80,7 @@ const Home = () => {
       } else {
         setVideos((prev) =>
           prev.map((v) =>
-            v._id === item._id ? { ...v, savesCount: v.savesCount - 1 } : v,
+            v._id === item._id ? { ...v, savesCount: Math.max(0, v.savesCount - 1) } : v,
           ),
         );
       }
@@ -93,62 +93,53 @@ const Home = () => {
     }
   }
 
-  return (
-    <>
-      {!isCheckingAuth && !isAuthenticated && (
-        <div
-          className="home-cta"
-          style={{ textAlign: "center", margin: "24px 0" }}
-        >
-          <p style={{ marginBottom: "10px" }}>
-            Welcome! To view the reel, first go to the login page.
-          </p>
-          <div
-            style={{ display: "flex", justifyContent: "center", gap: "12px" }}
-          >
-            <Link
-              to="/user/login"
-              style={{
-                padding: "10px 16px",
-                borderRadius: "6px",
-                backgroundColor: "#007bff",
-                color: "white",
-                textDecoration: "none",
-                display: "inline-flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minWidth: "140px",
-              }}
-            >
-              User Login
-            </Link>
+  const handleVisitStore = (foodPartnerId) => {
+    navigate(`/food-partner/${foodPartnerId}`);
+  };
 
-            <Link
-              to="/food-partner/login"
-              style={{
-                padding: "10px 16px",
-                borderRadius: "6px",
-                backgroundColor: "#22c55e",
-                color: "white",
-                textDecoration: "none",
-                display: "inline-flex",
-                justifyContent: "center",
-                alignItems: "center",
-                minWidth: "170px",
-              }}
-            >
-              Food Partner Login
-            </Link>
+  if (isCheckingAuth) {
+    return (
+      <div className="reels-page">
+        <div className="empty-state">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="reels-page">
+        <div className="empty-state">
+          <div className="home-cta">
+            <h2>Welcome to Insta Food! 🍕</h2>
+            <p>Discover delicious food from amazing restaurants</p>
+            <div className="auth-buttons">
+              <button onClick={() => navigate("/user/login")} className="auth-btn primary">
+                User Login
+              </button>
+              <button onClick={() => navigate("/food-partner/login")} className="auth-btn secondary">
+                Partner Login
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      <ReelFeed
-        items={videos}
-        onLike={likeVideo}
-        onSave={saveVideo}
-        emptyMessage="No videos available."
-      />
+  return (
+    <ReelFeed
+      items={videos}
+      onLike={likeVideo}
+      onSave={saveVideo}
+      onVisitStore={handleVisitStore}
+      emptyMessage="No videos available. Check back soon!"
+    />
+  );
+};
+
+export default Home;
     </>
   );
 };

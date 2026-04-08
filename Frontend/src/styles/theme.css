@@ -35,28 +35,47 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #0f172a; /* slate-900 */
-    --color-surface: #1e293b; /* slate-800 */
-    --color-surface-alt: #24324a; /* custom */
-    --color-border: #334155; /* slate-700 */
-    --color-text: #f1f5f9; /* slate-100 */
-    --color-text-secondary: #94a3b8; /* slate-400 */
-    --color-accent: #3b82f6; /* blue-500 */
-    --color-accent-hover: #60a5fa; /* blue-400 */
-    --color-danger: #f87171; /* red-400 */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --color-bg: #0a0e27;
+    --color-surface: #1a1f3a;
+    --color-surface-alt: #252d47;
+    --color-border: #3d4556;
+    --color-text: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-accent: #3b82f6;
+    --color-accent-hover: #60a5fa;
+    --color-danger: #f87171;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md:
       0 4px 18px -4px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
   }
 }
 
 /* Base element theming (can be imported once globally) */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
 body {
   font-family: var(--font-stack);
   background: var(--color-bg);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
-  line-height: 1.4;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }
 
 a {
@@ -70,7 +89,30 @@ a:focus-visible {
   color: var(--color-accent-hover);
 }
 
+button {
+  font-family: inherit;
+}
+
 ::selection {
   background: var(--color-accent);
   color: #fff;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
 }

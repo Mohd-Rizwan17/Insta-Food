@@ -12,12 +12,13 @@ const BottomNav = () => {
           className={({ isActive }) =>
             `bottom-nav__item ${isActive ? "is-active" : ""}`
           }
+          title="Home"
         >
           <span className="bottom-nav__icon" aria-hidden="true">
             {/* home icon */}
             <svg
-              width="22"
-              height="22"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -37,12 +38,13 @@ const BottomNav = () => {
           className={({ isActive }) =>
             `bottom-nav__item ${isActive ? "is-active" : ""}`
           }
+          title="Saved"
         >
           <span className="bottom-nav__icon" aria-hidden="true">
             {/* bookmark icon */}
             <svg
-              width="20"
-              height="20"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -54,6 +56,32 @@ const BottomNav = () => {
             </svg>
           </span>
           <span className="bottom-nav__label">Saved</span>
+        </NavLink>
+
+        <NavLink
+          to="/profile"
+          className={({ isActive }) =>
+            `bottom-nav__item ${isActive ? "is-active" : ""}`
+          }
+          title="Profile"
+        >
+          <span className="bottom-nav__icon" aria-hidden="true">
+            {/* user/profile icon */}
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="8" r="4" />
+              <path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+            </svg>
+          </span>
+          <span className="bottom-nav__label">Profile</span>
         </NavLink>
       </div>
     </nav>

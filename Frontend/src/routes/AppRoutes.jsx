@@ -1,6 +1,7 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Saved from "../Pages/general/Saved";
+import UserProfile from "../Pages/general/UserProfile";
 import BottomNav from "../components/BottomNav";
 import Home from "../Pages/general/Home";
 import ChooseRegister from "../Pages/auth/ChooseRegister";
@@ -22,6 +23,15 @@ const router = createBrowserRouter([
     element: (
       <>
         <Home />
+        <BottomNav />
+      </>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <>
+        <UserProfile />
         <BottomNav />
       </>
     ),

@@ -1,19 +1,22 @@
 import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Reusable feed for vertical reels
 // Props:
 // - items: Array of video items { _id, video, description, likeCount, savesCount, commentsCount, comments, foodPartner }
 // - onLike: (item) => void | Promise<void>
 // - onSave: (item) => void | Promise<void>
+// - onVisitStore: (foodPartnerId) => void | optional redirect logic
 // - emptyMessage: string
 const ReelFeed = ({
   items = [],
   onLike,
   onSave,
+  onVisitStore,
   emptyMessage = "No videos yet.",
 }) => {
   const videoRefs = useRef(new Map());
+  const navigate = useNavigate();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -45,6 +48,14 @@ const ReelFeed = ({
     videoRefs.current.set(id, el);
   };
 
+  const handleVisitStore = (foodPartnerId) => {
+    if (onVisitStore) {
+      onVisitStore(foodPartnerId);
+    } else {
+      navigate(`/food-partner/${foodPartnerId}`);
+    }
+  };
+
   return (
     <div className="reels-page">
       <div className="reels-feed" role="list">
@@ -74,6 +85,7 @@ const ReelFeed = ({
                     onClick={onLike ? () => onLike(item) : undefined}
                     className="reel-action"
                     aria-label="Like"
+                    title="Like"
                   >
                     <svg
                       width="22"
@@ -98,6 +110,7 @@ const ReelFeed = ({
                     className="reel-action"
                     onClick={onSave ? () => onSave(item) : undefined}
                     aria-label="Bookmark"
+                    title="Save"
                   >
                     <svg
                       width="22"
@@ -140,17 +153,24 @@ const ReelFeed = ({
               </div>
 
               <div className="reel-content">
-                <p className="reel-description" title={item.description}>
-                  {item.description}
-                </p>
+                <div className="reel-text-group">
+                  <p className="reel-food-name" title={item.description}>
+                    {item.description}
+                  </p>
+                  {item.foodPartner && (
+                    <p className="reel-restaurant-name">
+                      {item.foodPartnerName || "Restaurant"}
+                    </p>
+                  )}
+                </div>
                 {item.foodPartner && (
-                  <Link
+                  <button
+                    onClick={() => handleVisitStore(item.foodPartner)}
                     className="reel-btn"
-                    to={"/food-partner/" + item.foodPartner}
                     aria-label="Visit store"
                   >
-                    Visit store
-                  </Link>
+                    Visit Store
+                  </button>
                 )}
               </div>
             </div>
