@@ -7,20 +7,20 @@ const Saved = () => {
   const [videos, setVideos] = useState([]);
 
   useEffect(() => {
-    api
-      .get("/api/food/save")
-      .then((response) => {
-        const savedFoods = response.data.savedFoods.map((item) => ({
-          _id: item.food._id,
-          video: item.food.video,
-          description: item.food.description,
-          likeCount: item.food.likeCount,
-          savesCount: item.food.savesCount,
-          commentsCount: item.food.commentsCount,
-          foodPartner: item.food.foodPartner,
-        }));
-        setVideos(savedFoods);
-      });
+    api.get("/api/food/save").then((response) => {
+      const savedFoods = response.data.savedFoods.map((item) => ({
+        _id: item.food._id,
+        video: item.food.video,
+        description: item.food.description,
+        likeCount: item.food.likeCount,
+        savesCount: item.food.savesCount,
+        commentsCount: item.food.commentsCount,
+        foodPartner: item.food.foodPartner,
+        isSaved: true, // Since these are saved
+        isLiked: false, // We don't know, but for now false
+      }));
+      setVideos(savedFoods);
+    });
   }, []);
 
   const removeSaved = async (item) => {
@@ -29,10 +29,16 @@ const Saved = () => {
       setVideos((prev) =>
         prev.map((v) =>
           v._id === item._id
-            ? { ...v, savesCount: Math.max(0, (v.savesCount ?? 1) - 1) }
+            ? {
+                ...v,
+                savesCount: Math.max(0, (v.savesCount ?? 1) - 1),
+                isSaved: false,
+              }
             : v,
         ),
       );
+      // Remove from list
+      setVideos((prev) => prev.filter((v) => v._id !== item._id));
     } catch {
       // noop
     }

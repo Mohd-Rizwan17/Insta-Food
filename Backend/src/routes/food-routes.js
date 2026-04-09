@@ -46,4 +46,10 @@ router.post(
 
 router.get("/", authMiddleware.authUserMiddleware, foodController.getFoodItems);
 
+router.get(
+  "/like",
+  authMiddleware.authUserMiddleware,
+  foodController.getLikedFoods,
+);
+
 module.exports = router;

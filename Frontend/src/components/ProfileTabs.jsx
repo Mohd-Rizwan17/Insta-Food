@@ -1,21 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "./Toast";
-
-const getLocalStorageData = (key, defaultValue = []) => {
-  try {
-    return JSON.parse(localStorage.getItem(key)) || defaultValue;
-  } catch {
-    return defaultValue;
-  }
-};
-
-const setLocalStorageData = (key, data) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // ignore write failures
-  }
-};
+import api from "../lib/api";
 
 const ProfileTabs = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("orders");
@@ -30,37 +15,47 @@ const ProfileTabs = ({ userId }) => {
     loadTabData(activeTab);
   }, [activeTab]);
 
-  const loadTabData = (tab) => {
+  const loadTabData = async (tab) => {
     setIsLoading(true);
     try {
       switch (tab) {
         case "orders": {
-          const storedOrders = getLocalStorageData("orders", []);
-          setOrders(storedOrders);
+          // Assuming orders are not implemented, keep empty
+          setOrders([]);
           break;
         }
 
         case "saved": {
-          const storedSaved = getLocalStorageData("savedFoods", []);
-          setSaved(storedSaved);
+          const response = await api.get("/api/food/save");
+          const savedFoods = response.data.savedFoods.map((item) => ({
+            _id: item.food._id,
+            video: item.food.video,
+            description: item.food.description,
+            likeCount: item.food.likeCount,
+            savesCount: item.food.savesCount,
+            foodPartner: item.food.foodPartner,
+          }));
+          setSaved(savedFoods);
           break;
         }
 
         case "likes": {
-          const storedLikes = getLocalStorageData("likes", []);
-          setLikes(storedLikes);
+          const response = await api.get("/api/food/like");
+          const likedFoods = response.data.likedFoods.map((item) => ({
+            _id: item.food._id,
+            video: item.food.video,
+            description: item.food.description,
+            likeCount: item.food.likeCount,
+            savesCount: item.food.savesCount,
+            foodPartner: item.food.foodPartner,
+          }));
+          setLikes(likedFoods);
           break;
         }
 
         case "following": {
-          const storedFollowing = getLocalStorageData("following", []);
-          setFollowing(
-            storedFollowing.map((id) => ({
-              _id: id,
-              name: `Partner ${id.slice(-6)}`,
-              address: "Saved partner",
-            })),
-          );
+          // Assuming following is not implemented, keep empty
+          setFollowing([]);
           break;
         }
 
@@ -136,8 +131,8 @@ const ProfileTabs = ({ userId }) => {
             ) : (
               saved.map((item) => (
                 <div key={item._id} className="saved-card">
-                  <video src={item.food?.video} muted />
-                  <p className="card-title">{item.food?.description}</p>
+                  <video src={item.video} muted />
+                  <p className="card-title">{item.description}</p>
                 </div>
               ))
             )}
@@ -151,8 +146,8 @@ const ProfileTabs = ({ userId }) => {
             ) : (
               likes.map((item) => (
                 <div key={item._id} className="like-card">
-                  <video src={item.food?.video} muted />
-                  <p className="card-title">{item.food?.description}</p>
+                  <video src={item.video} muted />
+                  <p className="card-title">{item.description}</p>
                 </div>
               ))
             )}

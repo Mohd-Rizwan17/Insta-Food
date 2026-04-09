@@ -76,13 +76,11 @@ async function toggleLikeFood(req, res) {
 
     await food.save();
 
-    return res
-      .status(200)
-      .json({
-        message: "Like toggled",
-        like: isLiked,
-        likeCount: food.likeCount,
-      });
+    return res.status(200).json({
+      message: "Like toggled",
+      like: isLiked,
+      likeCount: food.likeCount,
+    });
   } catch (error) {
     console.error("toggleLikeFood error:", error);
     return res
@@ -121,13 +119,11 @@ async function toggleSaveFood(req, res) {
 
     await food.save();
 
-    return res
-      .status(200)
-      .json({
-        message: "Save toggled",
-        save: isSaved,
-        savesCount: food.savesCount,
-      });
+    return res.status(200).json({
+      message: "Save toggled",
+      save: isSaved,
+      savesCount: food.savesCount,
+    });
   } catch (error) {
     console.error("toggleSaveFood error:", error);
     return res
@@ -152,10 +148,27 @@ async function getSavedFoods(req, res) {
   }
 }
 
+async function getLikedFoods(req, res) {
+  try {
+    const likedFoods = await likedFoodModel
+      .find({ user: req.user._id })
+      .populate("food");
+    return res
+      .status(200)
+      .json({ message: "Liked food items retrieved", likedFoods });
+  } catch (error) {
+    console.error("getLikedFoods error:", error);
+    return res
+      .status(500)
+      .json({ message: error.message || "Failed to fetch liked foods" });
+  }
+}
+
 module.exports = {
   createFood,
   getFoodItems,
   toggleLikeFood,
   toggleSaveFood,
   getSavedFoods,
+  getLikedFoods,
 };
