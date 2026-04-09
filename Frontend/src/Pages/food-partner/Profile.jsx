@@ -4,9 +4,8 @@ import { useParams } from "react-router-dom";
 import api from "../../lib/api";
 import { useToast } from "../../components/Toast";
 import FollowButton from "../../components/FollowButton";
-import { useAuth } from "../../context/AuthContext";
 
-const Profile = () => {
+const Profile = ({ orders, setOrders, following, setFollowing }) => {
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [videos, setVideos] = useState([]);
@@ -14,7 +13,6 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("menu");
   const [orderedItems, setOrderedItems] = useState(new Set());
   const { showSuccess, showError } = useToast();
-  const { orders, setOrders, following, setFollowing } = useAuth();
 
   useEffect(() => {
     loadProfile();

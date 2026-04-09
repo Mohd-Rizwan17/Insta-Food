@@ -6,7 +6,7 @@ import ReelFeed from "../../components/ReelFeed";
 import { useToast } from "../../components/Toast";
 import { useAuth } from "../../context/AuthContext";
 
-const Home = () => {
+const Home = ({ orders, setOrders, following, setFollowing }) => {
   const [videos, setVideos] = useState([]);
   const [likedVideos, setLikedVideos] = useState(new Set());
   const [savedVideos, setSavedVideos] = useState(new Set());

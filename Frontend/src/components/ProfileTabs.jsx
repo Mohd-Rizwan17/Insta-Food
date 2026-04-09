@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "./Toast";
 import api from "../lib/api";
-import { useAuth } from "../context/AuthContext";
 
-const ProfileTabs = ({ userId }) => {
+const ProfileTabs = ({ userId, orders, following }) => {
   const [activeTab, setActiveTab] = useState("orders");
   const [saved, setSaved] = useState([]);
   const [likes, setLikes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { showError } = useToast();
-  const { orders, following } = useAuth();
 
   useEffect(() => {
     loadTabData(activeTab);

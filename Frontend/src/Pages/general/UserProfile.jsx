@@ -4,7 +4,7 @@ import { useToast } from "../../components/Toast";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/user-profile.css";
 
-const UserProfile = () => {
+const UserProfile = ({ orders, following }) => {
   const { user, setUser, isLoading: authLoading } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({ fullName: "", email: "" });
@@ -155,7 +155,7 @@ const UserProfile = () => {
         )}
       </section>
 
-      <ProfileTabs userId={user._id} />
+      <ProfileTabs userId={user._id} orders={orders} following={following} />
     </main>
   );
 };
