@@ -14,6 +14,8 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [orders, setOrders] = useState([]);
+  const [following, setFollowing] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -33,7 +35,17 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        isLoading,
+        orders,
+        setOrders,
+        following,
+        setFollowing,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

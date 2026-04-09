@@ -1,24 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useToast } from "./Toast";
-
-const getStoredFollowing = () => {
-  try {
-    return JSON.parse(localStorage.getItem("following")) || [];
-  } catch {
-    return [];
-  }
-};
-
-const setStoredFollowing = (list) => {
-  try {
-    localStorage.setItem("following", JSON.stringify(list));
-  } catch {
-    // ignore storage errors
-  }
-};
 
 const FollowButton = ({
   foodPartnerId,
+  foodPartnerName,
   initialIsFollowing = false,
   onFollowChange,
 }) => {
@@ -26,25 +11,14 @@ const FollowButton = ({
   const [isLoading, setIsLoading] = useState(false);
   const { showError, showSuccess } = useToast();
 
-  useEffect(() => {
-    const storedFollowing = getStoredFollowing();
-    setIsFollowing(storedFollowing.includes(foodPartnerId));
-  }, [foodPartnerId]);
-
   const handleFollowToggle = () => {
     setIsLoading(true);
     try {
-      const storedFollowing = getStoredFollowing();
-      const nextFollowing = storedFollowing.includes(foodPartnerId)
-        ? storedFollowing.filter((id) => id !== foodPartnerId)
-        : [...storedFollowing, foodPartnerId];
-
-      setStoredFollowing(nextFollowing);
-      const nextState = nextFollowing.includes(foodPartnerId);
+      const nextState = !isFollowing;
       setIsFollowing(nextState);
 
       if (onFollowChange) {
-        onFollowChange(nextState);
+        onFollowChange(foodPartnerId, foodPartnerName, nextState);
       }
 
       showSuccess(nextState ? "Following" : "Unfollowed successfully");

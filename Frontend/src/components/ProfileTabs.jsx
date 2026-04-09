@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useToast } from "./Toast";
 import api from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 
 const ProfileTabs = ({ userId }) => {
   const [activeTab, setActiveTab] = useState("orders");
-  const [orders, setOrders] = useState([]);
   const [saved, setSaved] = useState([]);
   const [likes, setLikes] = useState([]);
-  const [following, setFollowing] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { showError, showSuccess } = useToast();
+  const { showError } = useToast();
+  const { orders, following } = useAuth();
 
   useEffect(() => {
     loadTabData(activeTab);
@@ -19,12 +19,6 @@ const ProfileTabs = ({ userId }) => {
     setIsLoading(true);
     try {
       switch (tab) {
-        case "orders": {
-          // Assuming orders are not implemented, keep empty
-          setOrders([]);
-          break;
-        }
-
         case "saved": {
           const response = await api.get("/api/food/save");
           const savedFoods = response.data.savedFoods.map((item) => ({
@@ -50,12 +44,6 @@ const ProfileTabs = ({ userId }) => {
             foodPartner: item.food.foodPartner,
           }));
           setLikes(likedFoods);
-          break;
-        }
-
-        case "following": {
-          // Assuming following is not implemented, keep empty
-          setFollowing([]);
           break;
         }
 
@@ -162,40 +150,11 @@ const ProfileTabs = ({ userId }) => {
               following.map((partner) => (
                 <div key={partner._id} className="following-card">
                   <div className="partner-avatar">
-                    {partner.name.charAt(0).toUpperCase()}
+                    {partner.name ? partner.name.charAt(0).toUpperCase() : "P"}
                   </div>
                   <div className="partner-info">
                     <p className="partner-name">{partner.name}</p>
-                    <p className="partner-address">{partner.address}</p>
                   </div>
-                  <button
-                    className="unfollow-btn"
-                    onClick={() => {
-                      try {
-                        const storedFollowing = getLocalStorageData(
-                          "following",
-                          [],
-                        );
-                        const nextFollowing = storedFollowing.filter(
-                          (storedId) => storedId !== partner._id,
-                        );
-                        setLocalStorageData("following", nextFollowing);
-                        setFollowing(
-                          nextFollowing.map((id) => ({
-                            _id: id,
-                            name: `Partner ${id.slice(-6)}`,
-                            address: "Saved partner",
-                          })),
-                        );
-                        showSuccess("Unfollowed successfully");
-                      } catch (error) {
-                        console.log("Error unfollowing:", error);
-                        showError("Failed to unfollow");
-                      }
-                    }}
-                  >
-                    Following
-                  </button>
                 </div>
               ))
             )}

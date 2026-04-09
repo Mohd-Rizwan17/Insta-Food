@@ -4,22 +4,7 @@ import { useParams } from "react-router-dom";
 import api from "../../lib/api";
 import { useToast } from "../../components/Toast";
 import FollowButton from "../../components/FollowButton";
-
-const getStoredOrders = () => {
-  try {
-    return JSON.parse(localStorage.getItem("orders")) || [];
-  } catch {
-    return [];
-  }
-};
-
-const setStoredOrders = (orders) => {
-  try {
-    localStorage.setItem("orders", JSON.stringify(orders));
-  } catch {
-    // ignore storage errors
-  }
-};
+import { useAuth } from "../../context/AuthContext";
 
 const Profile = () => {
   const { id } = useParams();
@@ -29,15 +14,14 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("menu");
   const [orderedItems, setOrderedItems] = useState(new Set());
   const { showSuccess, showError } = useToast();
+  const { orders, setOrders, following, setFollowing } = useAuth();
 
   useEffect(() => {
     loadProfile();
-    const storedOrders = getStoredOrders();
-    const orderedIds = new Set(
-      storedOrders.map((order) => order.foodId || order.id),
-    );
+    // Track ordered items from shared state
+    const orderedIds = new Set(orders.map((order) => order.foodId || order.id));
     setOrderedItems(orderedIds);
-  }, [id]);
+  }, [id, orders]);
 
   const loadProfile = async () => {
     try {
@@ -56,7 +40,6 @@ const Profile = () => {
 
   const handleOrder = (foodItem) => {
     try {
-      const currentOrders = getStoredOrders();
       const foodId = foodItem._id || foodItem.id;
       const newOrder = {
         id: `${foodId}-${Date.now()}`,
@@ -66,14 +49,33 @@ const Profile = () => {
         partnerId: id,
         date: new Date().toISOString(),
       };
-      const nextOrders = [...currentOrders, newOrder];
-      setStoredOrders(nextOrders);
+      const nextOrders = [...orders, newOrder];
+      setOrders(nextOrders);
+      console.log("Order placed:", newOrder, "All orders:", nextOrders);
 
       setOrderedItems((prev) => new Set(prev).add(foodId));
       showSuccess("Order Placed Successfully ✅");
     } catch (error) {
       console.log(error);
       showError("Failed to place order");
+    }
+  };
+
+  const handleFollowChange = (partnerId, partnerName, isFollowing) => {
+    // Update shared following state
+    if (isFollowing) {
+      // Add to following
+      const newFollowing = [
+        ...following,
+        { _id: partnerId, name: partnerName },
+      ];
+      setFollowing(newFollowing);
+      console.log("Following:", newFollowing);
+    } else {
+      // Remove from following
+      const newFollowing = following.filter((p) => p._id !== partnerId);
+      setFollowing(newFollowing);
+      console.log("Unfollowed:", newFollowing);
     }
   };
 
@@ -136,7 +138,11 @@ const Profile = () => {
             </div>
 
             <div className="partner-actions">
-              <FollowButton foodPartnerId={id} />
+              <FollowButton
+                foodPartnerId={id}
+                foodPartnerName={profile.name}
+                onFollowChange={handleFollowChange}
+              />
             </div>
           </div>
         </div>
